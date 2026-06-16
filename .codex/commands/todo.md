@@ -30,6 +30,33 @@ Der aktuelle Pfad wird in `PROJEKT/TODO/.todo-config` gespeichert.
 
 ## Befehle
 
+### `/todo-setup` — Neues Projekt einrichten (einmalig)
+
+**Verwende diesen Befehl in jedem neuen Projekt als erstes.** Er richtet alles
+automatisch ein, sodass danach alle anderen `/todo-*`-Befehle funktionieren.
+
+Ablauf:
+1. Prüfe ob bereits eine TODO.html im Projekt existiert (via `.todo-config` oder
+   Default-Pfad `PROJEKT/TODO/TODO.html`)
+2. Falls bereits vorhanden: kurze Bestätigung ausgeben, Setup überspringen
+3. Falls nicht vorhanden:
+   a. Frage nach dem gewünschten Pfad (Default: `PROJEKT/TODO/TODO.html`, Enter = übernehmen)
+   b. Erstelle den Ordner falls nötig
+   c. Lade das Template von GitHub herunter:
+      ```
+      https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/todo/TODO.template.html
+      ```
+      Falls kein Internetzugang: Erstelle eine minimale TODO.html inline (gleiche
+      Struktur, leerer tbody).
+   d. Passe den Titel in der HTML an (ersetze „TINTLING TODO" durch den Projektnamen,
+      abgeleitet aus dem Verzeichnisnamen oder `package.json`/`pubspec.yaml`)
+   e. Schreibe den Pfad in `.todo-config`
+   f. Gib Erfolgsmeldung aus: Pfad, nächster Schritt (`/todo-add "Erstes Todo"`)
+
+Hinweis für Codex: Template via `curl` laden, Ordner via `mkdir -p` anlegen.
+
+---
+
 ### `/todo` — Übersicht offener Todos
 
 Lies die TODO.html und zeige eine kompakte Übersicht:
@@ -72,6 +99,7 @@ Beispiel: `/todo-close T-004`
 - `data-status="done"`
 - Badge-Klasse → `s-done`, Text → `✓ Erledigt`
 - Zeile bekommt Klasse `row-done`
+- `titel-col` erhält Durchstreichung via CSS (automatisch durch row-done)
 
 ### `/todo-debug` — Validierung und Diagnose
 
@@ -140,6 +168,7 @@ Erledigte Zeilen haben zusätzlich `class="row-done"` auf dem `<tr>`.
 - **Keine externen Dependencies**: TODO.html ist vollständig self-contained
   (inline CSS + JS, keine CDN-Links).
 - **Niemals löschen**: Todos werden nur als "done" markiert, nie aus der HTML entfernt.
+  Vollständige Nachvollziehbarkeit.
 - **Lokal first**: TODO.html bleibt im Repo (committed), PlayTest-Artefakte bleiben lokal.
 
 ---
@@ -147,23 +176,18 @@ Erledigte Zeilen haben zusätzlich `class="row-done"` auf dem `<tr>`.
 ## Nutzung in ChatGPT Codex
 
 Diese Datei ist self-contained für Codex. Codex nutzt Shell-Tooling statt
-Claude-spezifischer APIs. Befehle via:
+Claude-spezifischer APIs. Die Schritt-Logik ist dieselbe; Befehle via
+`codex --instructions <pfad-zu-SKILL.md> "/todo-<befehl>"`.
 
-```bash
-codex --instructions SKILL.md "/todo"
-codex --instructions SKILL.md "/todo-add Neues Feature"
-codex --instructions SKILL.md "/todo-close T-004"
-```
-
-Pfad-Auflösung: Lies zuerst `PROJEKT/TODO/.todo-config`, sonst default
-`PROJEKT/TODO/TODO.html` ab Repo-Root.
+Pfad-Auflösung für Codex: Lies zuerst `PROJEKT/TODO/.todo-config` (Pfad),
+falls nicht vorhanden default `PROJEKT/TODO/TODO.html` ab Repo-Root.
 
 ---
 
 ## Integration mit anderen Skills
 
-- **`/playtest`** → nach Playtest: `/todo-sync` aufrufen
-- **`/dev`** → vor Deploy: `/todo` aufrufen, kritische Todos prüfen
+- **`/playtest`** → nach Playtest: `/todo-sync` aufrufen, neue Bugfix-Todos importieren
+- **`/dev`** → vor Deploy: `/todo` aufrufen, kritische offene Todos prüfen
 - **`/projectclean`** → `/todo-export` für Release-Notes Anhang
-- **Superpower** → `/todo-add` direkt aus Findings aufrufen
-- **Playwright** → nach Testlauf fehlgeschlagene Tests als Todos eintragen
+- **Superpower (Claude)** → `/todo-add` direkt aus Superpower-Findings aufrufen
+- **Playwright** → nach Testlauf fehlgeschlagene Tests als Todos via `/todo-add` eintragen
