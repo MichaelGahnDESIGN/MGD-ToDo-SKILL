@@ -9,6 +9,7 @@ Ein universeller Skill für KI-Agenten (Claude Code & ChatGPT Codex), der Projek
 | Befehl | Was passiert |
 |--------|-------------|
 | `/todo` | Zeigt alle offenen Todos sortiert nach Priorität |
+| `/todo-setup` | startet Assistent für die Ersteinrichtung |
 | `/todo-add <titel>` | Fügt ein neues Todo in die HTML ein |
 | `/todo-close <id>` | Markiert ein Todo als erledigt |
 | `/todo-update` | Interaktives Aktualisieren von Status und Notizen |
