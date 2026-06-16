@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TINTLING — TODO</title>
+<style>
+  :root {
+    --bg:        #0d1117;
+    --bg2:       #161b22;
+    --bg3:       #1f2937;
+    --border:    #30363d;
+    --text:      #e6edf3;
+    --muted:     #7d8590;
+    --accent:    #d4a855;
+    --cyan:      #4ecdc4;
+    --red:       #e74c6b;
+    --green:     #3fb950;
+    --orange:    #f0883e;
+    --purple:    #a371f7;
+    --done-bg:   #0d2318;
+    --done-text: #3fb950;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .site-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+  }
+  .site-title span { color: var(--muted); font-weight: 400; font-size: 13px; letter-spacing: 0; }
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .stat-chip.open    { background: rgba(247,128,60,.12); border-color: var(--orange); color: var(--orange); }
+  .stat-chip.done    { background: rgba(63,185,80,.12);  border-color: var(--green);  color: var(--green);  }
+  .stat-chip.total   { background: rgba(212,168,85,.12); border-color: var(--accent); color: var(--accent); }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: .5;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 7px 10px 7px 34px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  #searchInput:focus { border-color: var(--accent); }
+  #searchInput::placeholder { color: var(--muted); }
+
+  select {
+    padding: 7px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  select:focus { border-color: var(--accent); }
+
+  .btn-reset {
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── MAIN ── */
+  main { padding: 20px 24px; }
+  .no-results {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--muted);
+    display: none;
+  }
+  .no-results.visible { display: block; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  thead th {
+    background: var(--bg2);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color .15s;
+  }
+  thead th:hover { color: var(--text); }
+  thead th.asc::after  { content: ' ▲'; color: var(--accent); }
+  thead th.desc::after { content: ' ▼'; color: var(--accent); }
+  thead th:first-child { width: 70px; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  tbody tr.row-done { background: var(--done-bg); }
+  tbody tr.row-done:hover { background: rgba(63,185,80,.06); }
+  tbody tr.row-done td { color: var(--muted); }
+  tbody tr.hidden { display: none; }
+
+  td {
+    padding: 10px 12px;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  td.id-col {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  td.titel-col { font-weight: 500; max-width: 280px; }
+  td.notizen-col { color: var(--muted); font-size: 12px; max-width: 220px; }
+  td.datum-col { white-space: nowrap; color: var(--muted); font-size: 11px; }
+  td.quelle-col { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  /* Status */
+  .s-offen    { background: rgba(247,128,60,.15); color: var(--orange); border-color: rgba(247,128,60,.4); }
+  .s-progress { background: rgba(78,205,196,.15); color: var(--cyan);   border-color: rgba(78,205,196,.4); }
+  .s-done     { background: rgba(63,185,80,.15);  color: var(--green);  border-color: rgba(63,185,80,.4);  }
+  /* Priorität */
+  .p-kritisch { background: rgba(231,76,107,.15); color: var(--red);    border-color: rgba(231,76,107,.4); }
+  .p-hoch     { background: rgba(240,136,62,.15); color: var(--orange); border-color: rgba(240,136,62,.4); }
+  .p-mittel   { background: rgba(212,168,85,.15); color: var(--accent); border-color: rgba(212,168,85,.4); }
+  .p-niedrig  { background: rgba(125,133,144,.15);color: var(--muted);  border-color: rgba(125,133,144,.4);}
+  /* Kategorie */
+  .k-app      { background: rgba(163,113,247,.15);color: var(--purple); border-color: rgba(163,113,247,.4);}
+  .k-editor   { background: rgba(78,205,196,.15); color: var(--cyan);   border-color: rgba(78,205,196,.4); }
+  .k-backend  { background: rgba(212,168,85,.15); color: var(--accent); border-color: rgba(212,168,85,.4); }
+  .k-infra    { background: rgba(63,185,80,.15);  color: var(--green);  border-color: rgba(63,185,80,.4);  }
+  .k-ux       { background: rgba(231,76,107,.15); color: var(--red);    border-color: rgba(231,76,107,.4); }
+  .k-playtest { background: rgba(78,205,196,.15); color: var(--cyan);   border-color: rgba(78,205,196,.4); }
+  .k-doku     { background: rgba(125,133,144,.15);color: var(--muted);  border-color: rgba(125,133,144,.4);}
+
+  .done-icon { opacity: .4; font-size: 12px; }
+  .row-done td.titel-col { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="site-title">TINTLING TODO <span>— gepflegt von Claude Code &amp; Codex</span></div>
+    <div class="stats-bar">
+      <span class="stat-chip total" id="stat-total">0 Gesamt</span>
+      <span class="stat-chip open"  id="stat-open">0 Offen</span>
+      <span class="stat-chip done"  id="stat-done">0 Erledigt</span>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="searchInput" placeholder="Suchen (Titel, Notizen, ID…)">
+    </div>
+    <select id="filterStatus">
+      <option value="">Status: Alle</option>
+      <option value="offen">Offen</option>
+      <option value="progress">In Arbeit</option>
+      <option value="done">Erledigt</option>
+    </select>
+    <select id="filterPrio">
+      <option value="">Priorität: Alle</option>
+      <option value="kritisch">Kritisch</option>
+      <option value="hoch">Hoch</option>
+      <option value="mittel">Mittel</option>
+      <option value="niedrig">Niedrig</option>
+    </select>
+    <select id="filterKat">
+      <option value="">Kategorie: Alle</option>
+      <option value="app">App-Feature</option>
+      <option value="editor">Editor-Feature</option>
+      <option value="backend">Backend</option>
+      <option value="infra">Infra</option>
+      <option value="ux">UX</option>
+      <option value="playtest">Playtest</option>
+      <option value="doku">Dokumentation</option>
+    </select>
+    <button class="btn-reset" id="btnReset">↺ Reset</button>
+  </div>
+</header>
+
+<main>
+  <div class="table-wrap">
+    <table id="todoTable">
+      <thead>
+        <tr>
+          <th data-col="0">ID</th>
+          <th data-col="1">Titel</th>
+          <th data-col="2">Kategorie</th>
+          <th data-col="3">Priorität</th>
+          <th data-col="4">Status</th>
+          <th data-col="5">Quelle</th>
+          <th data-col="6">Notizen</th>
+          <th data-col="7">Datum</th>
+        </tr>
+      </thead>
+      <tbody id="todoBody">
+<!-- ══════════════════════════════════════════════════════
+     TODOS — fortlaufend ergänzen, niemals löschen.
+     Status: offen | progress | done
+     Prio:   kritisch | hoch | mittel | niedrig
+     Kat:    app | editor | backend | infra | ux | playtest | doku
+     ══════════════════════════════════════════════════════ -->
+
+<tr data-status="offen" data-prio="hoch" data-kat="app">
+  <td class="id-col">T-001</td>
+  <td class="titel-col">Beispiel-Todo: Ersten echten Todo eintragen</td>
+  <td><span class="badge k-app">App-Feature</span></td>
+  <td><span class="badge p-hoch">Hoch</span></td>
+  <td><span class="badge s-offen">Offen</span></td>
+  <td class="quelle-col">Manuell</td>
+  <td class="notizen-col">Diesen Eintrag ersetzen oder mit /todo-add neue Todos hinzufügen.</td>
+  <td class="datum-col">2026-06-16</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="no-results" id="noResults">
+    Keine Todos gefunden — Filter oder Suche anpassen.
+  </div>
+</main>
+
+<footer>
+  TINTLING TODO &mdash; Pfad: <code>PROJEKT/TODO/TODO.html</code> &mdash;
+  Gepflegt mit <a href="https://claude.ai/code">Claude Code</a> &amp; ChatGPT Codex &mdash;
+  <a href="https://github.com/MichaelGahnDESIGN/MGD-ToDo-SKILL">MGD-ToDo-SKILL on GitHub</a>
+</footer>
+
+<script>
+(function () {
+  const tbody   = document.getElementById('todoBody');
+  const search  = document.getElementById('searchInput');
+  const fStatus = document.getElementById('filterStatus');
+  const fPrio   = document.getElementById('filterPrio');
+  const fKat    = document.getElementById('filterKat');
+  const noRes   = document.getElementById('noResults');
+  const ths     = document.querySelectorAll('thead th[data-col]');
+
+  let sortCol = -1, sortAsc = true;
+
+  function rows() { return Array.from(tbody.querySelectorAll('tr')); }
+
+  /* ── FILTER ── */
+  function applyFilters() {
+    const q = search.value.toLowerCase().trim();
+    const st = fStatus.value;
+    const pr = fPrio.value;
+    const kt = fKat.value;
+
+    let visible = 0;
+    rows().forEach(tr => {
+      const text = tr.textContent.toLowerCase();
+      const matchQ  = !q  || text.includes(q);
+      const matchSt = !st || tr.dataset.status === st;
+      const matchPr = !pr || tr.dataset.prio   === pr;
+      const matchKt = !kt || tr.dataset.kat    === kt;
+      const show = matchQ && matchSt && matchPr && matchKt;
+      tr.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    noRes.classList.toggle('visible', visible === 0);
+    updateStats();
+  }
+
+  /* ── SORT ── */
+  function sortTable(col) {
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = true; }
+
+    ths.forEach(th => th.classList.remove('asc','desc'));
+    ths[col].classList.add(sortAsc ? 'asc' : 'desc');
+
+    const cells = rows().map(tr => ({
+      tr,
+      val: tr.cells[col] ? tr.cells[col].textContent.trim().toLowerCase() : ''
+    }));
+    cells.sort((a, b) => sortAsc
+      ? a.val.localeCompare(b.val, 'de')
+      : b.val.localeCompare(a.val, 'de')
+    );
+    cells.forEach(({ tr }) => tbody.appendChild(tr));
+  }
+
+  /* ── STATS ── */
+  function updateStats() {
+    const all = rows();
+    const visible = all.filter(r => !r.classList.contains('hidden'));
+    const done = visible.filter(r => r.dataset.status === 'done').length;
+    const open = visible.length - done;
+    document.getElementById('stat-total').textContent = visible.length + ' Gesamt';
+    document.getElementById('stat-open').textContent  = open + ' Offen';
+    document.getElementById('stat-done').textContent  = done + ' Erledigt';
+  }
+
+  /* ── EVENTS ── */
+  search.addEventListener('input', applyFilters);
+  fStatus.addEventListener('change', applyFilters);
+  fPrio.addEventListener('change', applyFilters);
+  fKat.addEventListener('change', applyFilters);
+  ths.forEach(th => th.addEventListener('click', () => sortTable(+th.dataset.col)));
+  document.getElementById('btnReset').addEventListener('click', () => {
+    search.value = '';
+    fStatus.value = fPrio.value = fKat.value = '';
+    ths.forEach(th => th.classList.remove('asc','desc'));
+    sortCol = -1;
+    applyFilters();
+  });
+
+  /* ── INIT ── */
+  updateStats();
+})();
+</script>
+</body>
+</html>
+
