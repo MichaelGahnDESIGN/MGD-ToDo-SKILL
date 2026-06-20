@@ -148,15 +148,16 @@ Dieser Skill ist darauf ausgelegt, mit anderen KI-Skills zusammenzuarbeiten:
 
 ---
 
-## Weitere öffentliche Skills von MGD
+## Verwandte MGD Projekte
 
-| Skill | Beschreibung |
-|-------|-------------|
-| [MGD-DEV-Skill](https://github.com/MichaelGahnDESIGN/MGD-DEV-Skill) | Release, Sync, Backup, Cleanup, Tests, Wissensdokumentation |
-| [MGD-AI-PlayTest-Skill](https://github.com/MichaelGahnDESIGN/MGD-AI-PlayTest-Skill) | Live-Playtest einer Web-App aus Erstnutzer-Perspektive |
-| [MGD-ProjectClean-Skill](https://github.com/MichaelGahnDESIGN/MGD-ProjectClean-Skill) | Abschluss- und Aufräum-Workflow: Version, Backup, Cleanup |
-| [MGD-AI-Project-Updater-Skill](https://github.com/MichaelGahnDESIGN/MGD-AI-Project-Updater-Skill) | Sichere lokale Staging-, Docker- und Update-Workflows |
-| [MGD-AI-Basic-Projektordner](https://github.com/MichaelGahnDESIGN/MGD-AI-Basic-Projektordner) | Projektordner-Vorlage für ChatGPT Codex, Cowork & Claude Code |
+| Projekt | Beschreibung |
+|---------|-------------|
+| [MGD-App-Updater-Skill](https://github.com/MichaelGahnDESIGN/MGD-App-Updater-Skill) | Software-Update-Systeme planen und implementieren |
+| [MGD-Bugreport-Skill](https://github.com/MichaelGahnDESIGN/MGD-Bugreport-Skill) | Feedback-Hub: Bug-Meldung, Ideen und Support |
+| [MGD-DEV-Skill](https://github.com/MichaelGahnDESIGN/MGD-DEV-Skill) | Release, Sync, Backup und Wissensdokumentation |
+| [MGD-AI-PlayTest-Skill](https://github.com/MichaelGahnDESIGN/MGD-AI-PlayTest-Skill) | Live-Playtest aus Nutzerperspektive |
+| [MGD-ProjectClean-Skill](https://github.com/MichaelGahnDESIGN/MGD-ProjectClean-Skill) | Abschluss- und Aufräum-Workflow |
+| [MGD-AI-Basic-Projektordner](https://github.com/MichaelGahnDESIGN/MGD-AI-Basic-Projektordner) | Projektvorlage für KI-Agenten |
 
 ---
 
@@ -167,3 +168,9 @@ MIT — frei verwendbar, anpassbar, weitergeben mit Namensnennung.
 ---
 
 *Entwickelt von [Michael Gahn DESIGN](https://michael-gahn.de) — gepflegt mit Claude Code & ChatGPT Codex.*
+
+---
+
+## Impressum
+
+Angaben gemäß § 5 DDG — Siehe [`IMPRESSUM.md`](IMPRESSUM.md).
