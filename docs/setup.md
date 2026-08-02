@@ -16,7 +16,7 @@ mkdir -p ~/.claude/skills/todo
 
 # SKILL.md kopieren
 curl -o ~/.claude/skills/todo/SKILL.md \
-  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/SKILL.md
+  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD_Todo_SKILL/main/SKILL.md
 ```
 
 Danach ist `/todo` in jeder Claude-Code-Session verfügbar.
@@ -27,7 +27,7 @@ Danach ist `/todo` in jeder Claude-Code-Session verfügbar.
 # Im Projekt-Root
 mkdir -p .claude/commands
 curl -o .claude/commands/todo.md \
-  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/SKILL.md
+  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD_Todo_SKILL/main/SKILL.md
 ```
 
 ### Option C: ChatGPT Codex
@@ -35,7 +35,7 @@ curl -o .claude/commands/todo.md \
 ```bash
 mkdir -p .codex/commands
 curl -o .codex/commands/todo.md \
-  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/SKILL.md
+  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD_Todo_SKILL/main/SKILL.md
 ```
 
 Nutzung:
@@ -49,7 +49,7 @@ codex --instructions .codex/commands/todo.md "/todo"
 # Template ins Projekt kopieren
 mkdir -p PROJEKT/TODO
 curl -o PROJEKT/TODO/TODO.html \
-  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/todo/TODO.template.html
+  https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD_Todo_SKILL/main/todo/TODO.template.html
 ```
 
 Oder aus dem lokalen Klon:

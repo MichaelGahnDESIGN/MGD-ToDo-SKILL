@@ -44,7 +44,7 @@ Ablauf:
    b. Erstelle den Ordner falls nötig
    c. Lade das Template von GitHub herunter:
       ```
-      https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD-ToDo-SKILL/main/todo/TODO.template.html
+      https://raw.githubusercontent.com/MichaelGahnDESIGN/MGD_Todo_SKILL/main/todo/TODO.template.html
       ```
       Falls kein Internetzugang: Erstelle eine minimale TODO.html inline (gleiche
       Struktur, leerer tbody).
